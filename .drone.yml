@@ -1,0 +1,92 @@
+---
+kind: pipeline
+type: docker
+name: default
+
+concurrency:
+  limit: 1
+
+steps:
+- name: restore-cache-with-filesystem
+  image: meltwater/drone-cache:dev
+  pull: true
+  settings:
+    backend: "filesystem"
+    restore: true
+    cache_key: "volume"
+    archive_format: "gzip"
+    # filesystem_cache_root: "/tmp/cache"
+    mount:
+      - 'linux'
+  volumes:
+  - name: cache
+    path: /tmp/cache
+
+- name: createimage
+  image: docker:latest
+  volumes:
+  - name: docker_sock
+    path: /var/run/docker.sock
+  commands:
+  - ls -l ./
+  - ls -l /var/run/
+  - docker build -t debian .
+  - chmod -R o+rw ./
+
+- name: rebuild-cache-with-filesystem
+  image: meltwater/drone-cache:dev
+  pull: true
+  settings:
+    backend: "filesystem"
+    rebuild: true
+    cache_key: "volume"
+    archive_format: "gzip"
+    # filesystem_cache_root: "/tmp/cache"
+    mount:
+      - 'linux'
+  volumes:
+  - name: cache
+    path: /tmp/cache
+
+- name: checkbindings_mainlinequeue
+  image: debian
+  pull: if-not-exists
+  failure: ignore
+  commands:
+  - make checkbindings_mainlinequeue
+
+- name: checkdtbs_mainlinequeue
+  image: debian
+  pull: if-not-exists
+  failure: ignore
+  commands:
+  - make checkdtbs_mainlinequeue
+
+- name: checkpatch_mainlinequeue
+  image: debian
+  pull: if-not-exists
+  failure: ignore
+  commands:
+  - make checkpatch_mainlinequeue
+
+- name: plainbuild_mainlinequeue
+  image: debian
+  pull: if-not-exists
+  commands:
+  - make plainbuild_mainlinequeue
+
+- name: mstarbuild_mainlinequeue
+  image: debian
+  pull: if-not-exists
+  commands:
+  - make mstarbuild_mainlinequeue
+
+volumes:
+  - name: docker_sock
+    host:
+      path: /var/run/docker.sock
+  - name: cache
+    host:
+      path: /var/cache
+
+...
