@@ -28,8 +28,10 @@ checkbindings_mainlinequeue: linux_mainlinequeue dt-schema
 	PATH=~/.local/bin/:$(PATH) $(MAKE) -C linux $(LINUX_ARGS) dt_binding_check
 
 checkdtbs_mainlinequeue: linux_mainlinequeue dt-schema
-	$(MAKE) -C linux/ $(LINUX_ARGS) defconfig
+	$(MAKE) -C linux/ $(LINUX_ARGS) allnoconfig
+	cd linux && ./scripts/config --enable CONFIG_MMU
 	cd linux && ./scripts/config --enable ARCH_MSTARV7
+	$(MAKE) -C linux/ $(LINUX_ARGS) olddefconfig
 	PATH=~/.local/bin/:$(PATH) $(MAKE) -C linux $(LINUX_ARGS) clean
 	PATH=~/.local/bin/:$(PATH) $(MAKE) -C linux $(LINUX_ARGS) dtbs_check
 
