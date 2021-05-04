@@ -9,6 +9,9 @@ BRANCH_MAINLINEQUEUE = msc313_mainlining
 
 all: checkpatch
 
+outputs:
+	mkdir $@
+
 dt-schema:
 	pip3 install git+https://github.com/devicetree-org/dt-schema.git@master
 
@@ -39,14 +42,14 @@ checkpatch_mainlinequeue: linux_update
 	cd linux && ./scripts/checkpatch.pl -g torvalds/master..origin/$(BRANCH_MAINLINEQUEUE)
 
 # build the kernel without our junk
-plainbuild_mainlinequeue: linux_mainlinequeue
+plainbuild_mainlinequeue: linux_mainlinequeue outputs
 	$(MAKE) -C linux/ $(LINUX_ARGS) defconfig
-	$(MAKE) -C linux/ $(LINUX_ARGS) W=1
+	$(MAKE) -C linux/ $(LINUX_ARGS) W=1 | tee outputs/buildlog_mainlinequeue_plain.txt
 
 # build the kernel with our junk
-mstarbuild_mainlinequeue: linux_mainlinequeue
+mstarbuild_mainlinequeue: linux_mainlinequeue outputs
 	$(MAKE) -C linux/ $(LINUX_ARGS) defconfig
 	cd linux && ./scripts/config --enable ARCH_MSTARV7
 	$(MAKE) -C linux/ $(LINUX_ARGS) olddefconfig
 	$(MAKE) -C linux/ $(LINUX_ARGS) clean
-	$(MAKE) -C linux/ $(LINUX_ARGS) W=1
+	$(MAKE) -C linux/ $(LINUX_ARGS) W=1| tee outputs/buildlog_mainlinequeue_mstar.txt
