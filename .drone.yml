@@ -6,12 +6,6 @@ name: default
 concurrency:
   limit: 1
 
-trigger:
-  event:
-  - cron
-  cron:
-  - nightly
-
 steps:
 - name: restore-cache-with-filesystem
   image: meltwater/drone-cache:dev
