@@ -81,6 +81,13 @@ steps:
   commands:
   - make mstarbuild_mainlinequeue
 
+- name: checkpatch_workqueue
+  image: debian
+  pull: if-not-exists
+  failure: ignore
+  commands:
+  - make checkpatch_workqueue
+
 volumes:
   - name: docker_sock
     host:

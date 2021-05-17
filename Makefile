@@ -1,9 +1,11 @@
 LINUX_ARGS = ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf-
 
 BRANCH_MAINLINEQUEUE = msc313_mainlining
+BRANCH_WORKQUEUE = mstar_v5_13_rebase
 
 .PHONY:
-	checkpatch \
+	checkpatch_mainlinequeue \
+	checkpatch_workqueue \
 	dt-schema \
 	linux_update
 
@@ -53,3 +55,6 @@ mstarbuild_mainlinequeue: linux_mainlinequeue outputs
 	$(MAKE) -C linux/ $(LINUX_ARGS) olddefconfig
 	$(MAKE) -C linux/ $(LINUX_ARGS) clean
 	$(MAKE) -C linux/ $(LINUX_ARGS) W=1| tee outputs/buildlog_mainlinequeue_mstar.txt
+
+checkpatch_workqueue: linux_update
+	cd linux && ./scripts/checkpatch.pl -g torvalds/master..origin/$(BRANCH_WORQUEUE)
