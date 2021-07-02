@@ -1,7 +1,9 @@
 LINUX_ARGS = ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf-
 
+CHENXING_REPO = https://github.com/linux-chenxing/linux.git
+
 BRANCH_MAINLINEQUEUE = msc313_mainlining
-BRANCH_WORKQUEUE = mstar_v5_13_rebase
+BRANCH_WORKQUEUE = mstar_v5_14_rebase
 
 .PHONY:
 	checkpatch_mainlinequeue \
@@ -18,11 +20,13 @@ dt-schema:
 	pip3 install git+https://github.com/devicetree-org/dt-schema.git@master
 
 linux:
-	git clone https://github.com/fifteenhex/linux.git
+	git clone $(CHENXING_REPO)
 	git -C linux remote add torvalds https://github.com/torvalds/linux.git
 	git -C linux fetch --all
 
 linux_update: linux
+	# just in case there is a source tree but it points at the wrong remote.
+	git -C linux remote set-url origin $(CHENXING_REPO)
 	git -C linux fetch --all
 
 linux_mainlinequeue: linux_update
