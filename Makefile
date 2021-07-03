@@ -61,4 +61,4 @@ mstarbuild_mainlinequeue: linux_mainlinequeue outputs
 	$(MAKE) -C linux/ $(LINUX_ARGS) W=1| tee outputs/buildlog_mainlinequeue_mstar.txt
 
 checkpatch_workqueue: linux_update
-	cd linux && ./scripts/checkpatch.pl -g torvalds/master..origin/$(BRANCH_WORQUEUE)
+	cd linux && ./scripts/checkpatch.pl -g torvalds/master..origin/$(BRANCH_WORKQUEUE)
