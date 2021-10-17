@@ -12,7 +12,7 @@ concurrency:
 
 steps:
 - name: restore-cache-with-filesystem
-  image: meltwater/drone-cache:dev
+  image: meltwater/drone-cache:latest
   pull: true
   settings:
     backend: "filesystem"
