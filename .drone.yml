@@ -42,7 +42,7 @@ steps:
   pull: true
   settings:
     backend: "filesystem"
-    rebuild: if-not-exists
+    rebuild: true
     cache_key: "volume"
     archive_format: "gzip"
     # filesystem_cache_root: "/tmp/cache"
