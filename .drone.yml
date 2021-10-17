@@ -37,6 +37,13 @@ steps:
   - docker build -t debian .
   - chmod -R o+rw ./
 
+- name: linux-update
+  image: debian
+  pull: if-not-exists
+  failure: ignore
+  commands:
+  - make linux_update
+
 - name: rebuild-cache-with-filesystem
   image: meltwater/drone-cache:latest
   pull: true
