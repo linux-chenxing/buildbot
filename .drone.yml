@@ -38,11 +38,11 @@ steps:
   - chmod -R o+rw ./
 
 - name: rebuild-cache-with-filesystem
-  image: meltwater/drone-cache:dev
+  image: meltwater/drone-cache:latest
   pull: true
   settings:
     backend: "filesystem"
-    rebuild: true
+    rebuild: if-not-exists
     cache_key: "volume"
     archive_format: "gzip"
     # filesystem_cache_root: "/tmp/cache"
