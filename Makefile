@@ -35,6 +35,7 @@ linux_mainlinequeue: linux_update
 	git -C linux reset --hard origin/$(BRANCH_MAINLINEQUEUE)
 
 checkbindings_mainlinequeue: linux_mainlinequeue dt-schema
+	$(MAKE) -C linux/ $(LINUX_ARGS) defconfig
 	PATH=~/.local/bin/:$(PATH) $(MAKE) -C linux $(LINUX_ARGS) clean
 	PATH=~/.local/bin/:$(PATH) $(MAKE) -C linux $(LINUX_ARGS) dt_binding_check $(NCPUS)
 
