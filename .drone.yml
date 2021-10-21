@@ -18,12 +18,11 @@ steps:
     backend: "filesystem"
     restore: true
     cache_key: "volume"
-    # filesystem_cache_root: "/tmp/cache"
     mount:
       - 'linux'
   volumes:
   - name: cache
-    path: /var/lib/drone/cache
+    path: /tmp/cache
 
 - name: createimage
   image: docker:latest
@@ -50,12 +49,11 @@ steps:
     backend: "filesystem"
     rebuild: true
     cache_key: "volume"
-    # filesystem_cache_root: "/tmp/cache"
     mount:
       - 'linux'
   volumes:
   - name: cache
-    path: /var/lib/drone/cache
+    path: /tmp/cache
 
 - name: checkbindings_mainlinequeue
   image: debian
