@@ -23,7 +23,7 @@ steps:
       - 'linux'
   volumes:
   - name: cache
-    path: /tmp/cache
+    path: /var/lib/drone/cache
 
 - name: createimage
   image: docker:latest
@@ -55,7 +55,7 @@ steps:
       - 'linux'
   volumes:
   - name: cache
-    path: /tmp/cache
+    path: /var/lib/drone/cache
 
 - name: checkbindings_mainlinequeue
   image: debian
@@ -103,6 +103,6 @@ volumes:
       path: /var/run/docker.sock
   - name: cache
     host:
-      path: /var/cache
+      path: /var/lib/drone/cache
 
 ...
