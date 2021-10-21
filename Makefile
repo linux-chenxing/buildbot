@@ -5,6 +5,8 @@ CHENXING_REPO = https://github.com/linux-chenxing/linux.git
 BRANCH_MAINLINEQUEUE = msc313_mainlining
 BRANCH_WORKQUEUE = mstar_v5_14_rebase
 
+NCPUS := $(shell nproc)
+
 .PHONY:
 	checkpatch_mainlinequeue \
 	checkpatch_workqueue \
@@ -50,7 +52,7 @@ checkpatch_mainlinequeue: linux_update
 # build the kernel without our junk
 plainbuild_mainlinequeue: linux_mainlinequeue outputs
 	$(MAKE) -C linux/ $(LINUX_ARGS) defconfig
-	$(MAKE) -C linux/ $(LINUX_ARGS) W=1 | tee outputs/buildlog_mainlinequeue_plain.txt
+	$(MAKE) -C linux/ $(LINUX_ARGS) -j$(NCPUS) W=1 | tee outputs/buildlog_mainlinequeue_plain.txt
 
 # build the kernel with our junk
 mstarbuild_mainlinequeue: linux_mainlinequeue outputs
@@ -58,7 +60,7 @@ mstarbuild_mainlinequeue: linux_mainlinequeue outputs
 	cd linux && ./scripts/config --enable ARCH_MSTARV7
 	$(MAKE) -C linux/ $(LINUX_ARGS) olddefconfig
 	$(MAKE) -C linux/ $(LINUX_ARGS) clean
-	$(MAKE) -C linux/ $(LINUX_ARGS) W=1| tee outputs/buildlog_mainlinequeue_mstar.txt
+	$(MAKE) -C linux/ $(LINUX_ARGS) -j$(NCPUS) W=1 | tee outputs/buildlog_mainlinequeue_mstar.txt
 
 checkpatch_workqueue: linux_update
 	cd linux && ./scripts/checkpatch.pl -g torvalds/master..origin/$(BRANCH_WORKQUEUE)
