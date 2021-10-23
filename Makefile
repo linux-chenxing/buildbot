@@ -37,7 +37,7 @@ linux_mainlinequeue: linux_update
 checkbindings_mainlinequeue: linux_mainlinequeue dt-schema
 	$(MAKE) -C linux/ $(LINUX_ARGS) defconfig
 	PATH=~/.local/bin/:$(PATH) $(MAKE) -C linux $(LINUX_ARGS) clean
-	PATH=~/.local/bin/:$(PATH) $(MAKE) -C linux $(LINUX_ARGS) dt_binding_check $(NCPUS)
+	PATH=~/.local/bin/:$(PATH) $(MAKE) -C linux $(LINUX_ARGS) -j$(NCPUS) dt_binding_check
 
 checkdtbs_mainlinequeue: linux_mainlinequeue dt-schema
 	$(MAKE) -C linux/ $(LINUX_ARGS) allnoconfig
@@ -45,7 +45,7 @@ checkdtbs_mainlinequeue: linux_mainlinequeue dt-schema
 	cd linux && ./scripts/config --enable ARCH_MSTARV7
 	$(MAKE) -C linux/ $(LINUX_ARGS) olddefconfig
 	PATH=~/.local/bin/:$(PATH) $(MAKE) -C linux $(LINUX_ARGS) clean
-	PATH=~/.local/bin/:$(PATH) $(MAKE) -C linux $(LINUX_ARGS) dtbs_check $(NCPUS)
+	PATH=~/.local/bin/:$(PATH) $(MAKE) -C linux $(LINUX_ARGS) -j$(NCPUS) dtbs_check
 
 checkpatch_mainlinequeue: linux_update
 	cd linux && ./scripts/checkpatch.pl -g torvalds/master..origin/$(BRANCH_MAINLINEQUEUE)
