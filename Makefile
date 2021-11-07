@@ -3,7 +3,7 @@ LINUX_ARGS = ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf-
 CHENXING_REPO = https://github.com/linux-chenxing/linux.git
 
 BRANCH_MAINLINEQUEUE = msc313_mainlining
-BRANCH_WORKQUEUE = mstar_v5_14_rebase
+BRANCH_WORKQUEUE = mstar_v5_16_rebase
 
 NCPUS := $(shell nproc)
 
