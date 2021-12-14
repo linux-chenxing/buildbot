@@ -7,96 +7,96 @@ concurrency:
   limit: 1
 
 steps:
-- name: restore-cache-with-filesystem
-  image: meltwater/drone-cache:latest
-  pull: true
-  settings:
-    backend: "filesystem"
-    restore: true
-    cache_key: "volume"
-    mount:
-      - 'linux'
-  volumes:
-  - name: cache
-    path: /tmp/cache
+  - name: restore-cache-with-filesystem
+    image: meltwater/drone-cache:latest
+    pull: true
+    settings:
+      backend: "filesystem"
+      restore: true
+      cache_key: "volume"
+      mount:
+        - 'linux'
+    volumes:
+      - name: cache
+        path: /tmp/cache
 
-- name: createimage
-  image: docker:latest
-  volumes:
-  - name: docker_sock
-    path: /var/run/docker.sock
-  commands:
-  - ls -l ./
-  - ls -l /var/run/
-  - docker build -t debian .
-  - chmod -R o+rw ./
+  - name: createimage
+    image: docker:latest
+    volumes:
+      - name: docker_sock
+        path: /var/run/docker.sock
+    commands:
+      - ls -l ./
+      - ls -l /var/run/
+      - docker build -t debian .
+      - chmod -R o+rw ./
 
-- name: linux-update
-  image: debian
-  pull: if-not-exists
-  failure: ignore
-  commands:
-  - make linux_update
+  - name: linux-update
+    image: debian
+    pull: if-not-exists
+    failure: ignore
+    commands:
+      - make linux_update
 
-- name: rebuild-cache-with-filesystem
-  image: meltwater/drone-cache:latest
-  pull: true
-  settings:
-    backend: "filesystem"
-    rebuild: true
-    cache_key: "volume"
-    mount:
-      - 'linux'
-  volumes:
-  - name: cache
-    path: /tmp/cache
+  - name: rebuild-cache-with-filesystem
+    image: meltwater/drone-cache:latest
+    pull: true
+    settings:
+      backend: "filesystem"
+      rebuild: true
+      cache_key: "volume"
+      mount:
+        - 'linux'
+    volumes:
+      - name: cache
+        path: /tmp/cache
 
-- name: checkbindings_mainlinequeue
-  image: debian
-  pull: if-not-exists
-  failure: ignore
-  commands:
-  - make checkbindings_mainlinequeue
+  - name: checkbindings_mainlinequeue
+    image: debian
+    pull: if-not-exists
+    failure: ignore
+    commands:
+      - make checkbindings_mainlinequeue
 
-- name: checkdtbs_mainlinequeue
-  image: debian
-  pull: if-not-exists
-  failure: ignore
-  commands:
-  - make checkdtbs_mainlinequeue
+  - name: checkdtbs_mainlinequeue
+    image: debian
+    pull: if-not-exists
+    failure: ignore
+    commands:
+      - make checkdtbs_mainlinequeue
 
-- name: checkpatch_mainlinequeue
-  image: debian
-  pull: if-not-exists
-  failure: ignore
-  commands:
-  - make checkpatch_mainlinequeue
+  - name: checkpatch_mainlinequeue
+    image: debian
+    pull: if-not-exists
+    failure: ignore
+    commands:
+      - make checkpatch_mainlinequeue
 
-- name: plainbuild_mainlinequeue
-  image: debian
-  pull: if-not-exists
-  commands:
-  - make plainbuild_mainlinequeue
+  - name: plainbuild_mainlinequeue
+    image: debian
+    pull: if-not-exists
+    commands:
+      - make plainbuild_mainlinequeue
 
-- name: mstarbuild_mainlinequeue
-  image: debian
-  pull: if-not-exists
-  commands:
-  - make mstarbuild_mainlinequeue
+  - name: mstarbuild_mainlinequeue
+    image: debian
+    pull: if-not-exists
+    commands:
+      - make mstarbuild_mainlinequeue
 
-- name: checkpatch_workqueue
-  image: debian
-  pull: if-not-exists
-  failure: ignore
-  commands:
-  - make checkpatch_workqueue
+  - name: checkpatch_workqueue
+    image: debian
+    pull: if-not-exists
+    failure: ignore
+    commands:
+      - make checkpatch_workqueue
 
-- name: build_ssd20xd_image
-  image: debian
-  pull: if-not-exists
-  failure: ignore
-  commands:
-  - make outputs/kernel_ssd20xd.itb
+  - name: build_ssd20xd_image
+    image: debian
+    pull: if-not-exists
+    failure: ignore
+    commands:
+      - make outputs/kernel_ssd20xd.itb
 
 volumes:
   - name: docker_sock
