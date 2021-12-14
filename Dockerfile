@@ -1,7 +1,6 @@
 FROM debian:bullseye
 RUN adduser --disabled-password --gecos "" notroot
-RUN apt-get -qq update
-RUN apt-get -qq install \
+RUN apt-get -qq update && apt-get -qq install \
 	build-essential \
 	file \
 	wget \
@@ -18,5 +17,6 @@ RUN apt-get -qq install \
 	pkg-config \
 	libssl-dev \
 	libyaml-dev \
-	gcc-arm-linux-gnueabihf
+	gcc-arm-linux-gnueabihf \
+	u-boot-tools
 USER notroot

@@ -95,6 +95,13 @@ steps:
   commands:
   - make checkpatch_workqueue
 
+- name: build_ssd20xd_image
+  image: debian
+  pull: if-not-exists
+  failure: ignore
+  commands:
+  - make outputs/kernel_ssd20xd.itb
+
 volumes:
   - name: docker_sock
     host:

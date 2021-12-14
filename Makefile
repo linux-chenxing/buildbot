@@ -11,7 +11,9 @@ NCPUS := $(shell nproc)
 	checkpatch_mainlinequeue \
 	checkpatch_workqueue \
 	dt-schema \
-	linux_update
+	linux_update \
+	linux_workqueue \
+	linux_mainlinequeue \
 
 all: checkpatch
 
@@ -33,6 +35,9 @@ linux_update: linux
 
 linux_mainlinequeue: linux_update
 	git -C linux reset --hard origin/$(BRANCH_MAINLINEQUEUE)
+
+linux_workqueue: linux_update
+	git -C linux reset --hard origin/$(BRANCH_WORKQUEUE)
 
 checkbindings_mainlinequeue: linux_mainlinequeue dt-schema
 	$(MAKE) -C linux/ $(LINUX_ARGS) defconfig
@@ -63,5 +68,62 @@ mstarbuild_mainlinequeue: linux_mainlinequeue outputs
 	$(MAKE) -C linux/ $(LINUX_ARGS) clean
 	$(MAKE) -C linux/ $(LINUX_ARGS) -j$(NCPUS) W=1 | tee outputs/buildlog_mainlinequeue_mstar.txt
 
+# build the kernel with our junk
+mstarbuild_workqueue: linux_workqueue outputs
+	$(MAKE) -C linux/ $(LINUX_ARGS) defconfig
+	cd linux && ./scripts/config --disable ARCH_ACTIONS
+	cd linux && ./scripts/config --disable ARCH_ALPINE
+	cd linux && ./scripts/config --disable ARCH_WM8850
+	cd linux && ./scripts/config --disable ARCH_VEXPRESS
+	cd linux && ./scripts/config --disable ARCH_VIRT
+	cd linux && ./scripts/config --disable ARCH_ZYNQ
+	cd linux && ./scripts/config --disable ARCH_ARTPEC
+	cd linux && ./scripts/config --disable ARCH_ASPEED
+	cd linux && ./scripts/config --disable ARCH_AT91
+	cd linux && ./scripts/config --disable ARCH_BCM
+	cd linux && ./scripts/config --disable ARCH_BERLIN
+	cd linux && ./scripts/config --disable ARCH_DIGICOLOR
+	cd linux && ./scripts/config --disable ARCH_EXYNOS
+	cd linux && ./scripts/config --disable ARCH_HIGHBANK
+	cd linux && ./scripts/config --disable ARCH_HISI
+	cd linux && ./scripts/config --disable ARCH_MXC
+	cd linux && ./scripts/config --disable ARCH_KEYSTONE
+	cd linux && ./scripts/config --disable ARCH_MEDIATEK
+	cd linux && ./scripts/config --disable ARCH_MESON
+	cd linux && ./scripts/config --disable ARCH_MILBEAUT
+	cd linux && ./scripts/config --disable ARCH_MMP
+	cd linux && ./scripts/config --disable ARCH_MVEBU
+	cd linux && ./scripts/config --disable ARCH_TEGRA
+	cd linux && ./scripts/config --disable ARCH_QCOM
+	cd linux && ./scripts/config --disable ARCH_OMAP3
+	cd linux && ./scripts/config --disable ARCH_OMAP4
+	cd linux && ./scripts/config --disable SOC_AM33XX
+	cd linux && ./scripts/config --disable SOC_AM43XX
+	cd linux && ./scripts/config --disable SOC_DRA7XX
+	cd linux && ./scripts/config --disable SOC_OMAP5
+	cd linux && ./scripts/config --disable ARCH_ROCKCHIP
+	cd linux && ./scripts/config --disable ARCH_RENESAS
+	cd linux && ./scripts/config --disable ARCH_INTEL_SOCFPGA
+	cd linux && ./scripts/config --disable PLAT_SPEAR
+	cd linux && ./scripts/config --disable ARCH_STI
+	cd linux && ./scripts/config --disable ARCH_STM32
+	cd linux && ./scripts/config --disable ARCH_SUNXI
+	cd linux && ./scripts/config --disable ARCH_UNIPHIER
+	cd linux && ./scripts/config --disable ARCH_U8500
+	cd linux && ./scripts/config --enable ARCH_MSTARV7
+	#
+	cd linux && ./scripts/config --disable HIGHMEM
+	cd linux && ./scripts/config --disable EFI
+	# unneeded network
+	cd linux && ./scripts/config --disable B53
+
+	$(MAKE) -C linux/ $(LINUX_ARGS) olddefconfig
+	$(MAKE) -C linux/ $(LINUX_ARGS) clean
+	$(MAKE) -C linux/ $(LINUX_ARGS) -j$(NCPUS) W=1 | tee outputs/buildlog_mainlinequeue_mstar.txt
+
 checkpatch_workqueue: linux_update
 	cd linux && ./scripts/checkpatch.pl -g torvalds/master..origin/$(BRANCH_WORKQUEUE)
+
+outputs/kernel_ssd20xd.itb: kernel_ssd20xd.its mstarbuild_workqueue
+	mkdir -p outputs
+	mkimage -f $< $@
