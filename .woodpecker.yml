@@ -1,109 +1,35 @@
 ---
-kind: pipeline
-type: docker
-name: default
-
-concurrency:
-  limit: 1
-
-steps:
-  - name: restore-cache-with-filesystem
-    image: meltwater/drone-cache:latest
-    pull: true
-    settings:
-      backend: "filesystem"
-      restore: true
-      cache_key: "volume"
-      mount:
-        - 'linux'
+pipeline:
+  createimage:
+    image: docker
     volumes:
-      - name: cache
-        path: /tmp/cache
-
-  - name: createimage
-    image: docker:latest
-    volumes:
-      - name: docker_sock
-        path: /var/run/docker.sock
+      - /var/run/docker.sock:/var/run/docker.sock
     commands:
       - ls -l ./
       - ls -l /var/run/
-      - docker build -t debian .
+      - docker build -t chenxing_buildbot .
       - chmod -R o+rw ./
 
-  - name: linux-update
-    image: debian
-    pull: if-not-exists
-    failure: ignore
+  plainbuild_mainlinequeue:
+    image: chenxing_buildbot
     commands:
-      - make linux_update
-
-  - name: rebuild-cache-with-filesystem
-    image: meltwater/drone-cache:latest
-    pull: true
-    settings:
-      backend: "filesystem"
-      rebuild: true
-      cache_key: "volume"
-      mount:
-        - 'linux'
-    volumes:
-      - name: cache
-        path: /tmp/cache
-
-  - name: checkbindings_mainlinequeue
-    image: debian
-    pull: if-not-exists
-    failure: ignore
-    commands:
-      - make checkbindings_mainlinequeue
-
-  - name: checkdtbs_mainlinequeue
-    image: debian
-    pull: if-not-exists
-    failure: ignore
-    commands:
-      - make checkdtbs_mainlinequeue
-
-  - name: checkpatch_mainlinequeue
-    image: debian
-    pull: if-not-exists
-    failure: ignore
-    commands:
-      - make checkpatch_mainlinequeue
-
-  - name: plainbuild_mainlinequeue
-    image: debian
-    pull: if-not-exists
-    commands:
+      - git config --global url."http://$${GITCDN_GITHUB_USER}:$${GITCDN_GITHUB_TOKEN}@utan:7171".insteadOf https://github.com
       - make plainbuild_mainlinequeue
+    secrets: [ GITCDN_GITHUB_USER, GITCDN_GITHUB_TOKEN ]
 
-  - name: mstarbuild_mainlinequeue
-    image: debian
-    pull: if-not-exists
-    commands:
-      - make mstarbuild_mainlinequeue
+  mstarbuild_mainlinequeue:
+   image: chenxing_buildbot
+   commands:
+     - make mstarbuild_mainlinequeue
 
-  - name: checkpatch_workqueue
-    image: debian
-    pull: if-not-exists
-    failure: ignore
-    commands:
-      - make checkpatch_workqueue
+#  checkbindings_mainlinequeue:
+#    image: chenxing_buildbot
+#    commands:
+#      - make checkbindings_mainlinequeue
 
-  - name: build_ssd20xd_image
-    image: debian
-    pull: if-not-exists
-    failure: ignore
+  build_images:
+    image: chenxing_buildbot
     commands:
       - make outputs/kernel_ssd20xd.itb
-
-volumes:
-  - name: docker_sock
-    host:
-      path: /var/run/docker.sock
-  - name: cache
-    host:
-      path: /var/lib/drone/cache
 
 ...
