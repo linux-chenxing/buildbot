@@ -10,6 +10,7 @@ pipeline:
       - docker build -t chenxing_buildbot .
       - chmod -R o+rw ./
 
+# Build checks
   plainbuild_mainlinequeue:
     image: chenxing_buildbot
     commands:
@@ -22,11 +23,19 @@ pipeline:
    commands:
      - make mstarbuild_mainlinequeue
 
+# DTB checks
+  checkdtbs_mainlinequeue
+    image: chenxing_buildbot
+    commands:
+      - make checkdtbs_mainlinequeue
+
+# Binding checks
 #  checkbindings_mainlinequeue:
 #    image: chenxing_buildbot
 #    commands:
 #      - make checkbindings_mainlinequeue
 
+# Create downloadables
   build_images:
     image: chenxing_buildbot
     commands:
