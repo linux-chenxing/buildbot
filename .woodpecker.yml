@@ -24,7 +24,7 @@ pipeline:
      - make mstarbuild_mainlinequeue
 
 # DTB checks
-  checkdtbs_mainlinequeue
+  checkdtbs_mainlinequeue:
     image: chenxing_buildbot
     commands:
       - make checkdtbs_mainlinequeue
