@@ -1,6 +1,7 @@
 LINUX_ARGS = ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf-
 
 CHENXING_REPO = https://github.com/linux-chenxing/linux.git
+CHENXING_UBOOT_REPO = https://github.com/linux-chenxing/u-boot.git
 
 BRANCH_MAINLINEQUEUE = msc313_mainlining
 BRANCH_WORKQUEUE = mstar_v5_16_rebase
@@ -14,6 +15,7 @@ NCPUS := $(shell nproc)
 	linux_update \
 	linux_workqueue \
 	linux_mainlinequeue \
+	u-boot_update
 
 all: checkpatch
 
@@ -127,3 +129,16 @@ checkpatch_workqueue: linux_update
 outputs/kernel_ssd20xd.itb: kernel_ssd20xd.its mstarbuild_workqueue
 	mkdir -p outputs
 	mkimage -f $< $@
+
+u-boot:
+	git clone $(CHENXING_UBOOT_REPO)
+	git -C $@ fetch --all
+
+u-boot-update: u-boot
+	git -C $< fetch --all
+	git -C $< reset --hard origin/mstar_rebase_mainline
+
+outputs/u-boot-som2d01.tar.gz: u-boot-update
+	make -C u-boot mstar_infinity2m_som2d01_defconfig
+	make -C u-boot CROSS_COMPILE=arm-linux-gnueabihf-
+	tar czf $@ u-boot/ipl u-boot/u-boot.img
