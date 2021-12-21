@@ -130,13 +130,30 @@ outputs/kernel_ssd20xd.itb: kernel_ssd20xd.its mstarbuild_workqueue
 	mkdir -p outputs
 	mkimage -f $< $@
 
+UBOOT_BRANCH=mstar_rebase_mainline_20211217
+
 u-boot:
 	git clone $(CHENXING_UBOOT_REPO)
 	git -C $@ fetch --all
 
 u-boot-update: u-boot
 	git -C $< fetch --all
-	git -C $< reset --hard origin/mstar_rebase_mainline
+	git -C $< reset --hard origin/$(UBOOT_BRANCH)
+
+outputs/u-boot-breadbee.tar.gz: u-boot-update
+	make -C u-boot msc313_breadbee_defconfig
+	make -C u-boot CROSS_COMPILE=arm-linux-gnueabihf-
+	tar czf $@ u-boot/ipl u-boot/u-boot.img
+
+outputs/u-boot-dongshanpione.tar.gz: u-boot-update
+	make -C u-boot mstar_infinity2m_dongshanpione_defconfig
+	make -C u-boot CROSS_COMPILE=arm-linux-gnueabihf-
+	tar czf $@ u-boot/ipl u-boot/u-boot.img
+
+outputs/u-boot-unitv2.tar.gz: u-boot-update
+	make -C u-boot mstar_infinity2m_unitv2_defconfig
+	make -C u-boot CROSS_COMPILE=arm-linux-gnueabihf-
+	tar czf $@ u-boot/ipl u-boot/u-boot.img
 
 outputs/u-boot-som2d01.tar.gz: u-boot-update
 	make -C u-boot mstar_infinity2m_som2d01_defconfig
