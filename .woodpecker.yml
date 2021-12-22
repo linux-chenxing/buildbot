@@ -40,6 +40,9 @@ pipeline:
     image: chenxing_buildbot
     commands:
       - make outputs/kernel_ssd20xd.itb
+      - make outputs/u-boot-breadbee.tar.gz
+      - make outputs/u-boot-dongshanpione.tar.gz
+      - make outputs/u-boot-unitv2.tar.gz
       - make outputs/u-boot-som2d01.tar.gz
 
 ...
