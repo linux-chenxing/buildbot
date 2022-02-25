@@ -14,9 +14,7 @@ pipeline:
   plainbuild_mainlinequeue:
     image: chenxing_buildbot
     commands:
-      - git config --global url."http://$${GITCDN_GITHUB_USER}:$${GITCDN_GITHUB_TOKEN}@utan:7171".insteadOf https://github.com
       - make plainbuild_mainlinequeue
-    secrets: [ GITCDN_GITHUB_USER, GITCDN_GITHUB_TOKEN ]
 
   mstarbuild_mainlinequeue:
    image: chenxing_buildbot

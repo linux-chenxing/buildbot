@@ -26,7 +26,7 @@ dt-schema:
 	pip3 install git+https://github.com/devicetree-org/dt-schema.git@master
 
 linux:
-	git clone $(CHENXING_REPO)
+	git clone --filter=tree:0 $(CHENXING_REPO)
 	git -C linux remote add torvalds https://github.com/torvalds/linux.git
 	git -C linux fetch --all
 
